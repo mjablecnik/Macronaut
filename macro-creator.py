@@ -1,4 +1,14 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+
+  Copyright (c) 2016 Martin Jablečník
+  Authors: Martin Jablečník
+  Description: Script for record macros
+  
+"""
+
+
 import getopt, sys, os
 
 from pyautogui import hotkey, typewrite, click
