@@ -13,7 +13,7 @@ Macronaut is simple macro creator for simplification repetitive tasks.
   
   Go to repository:
   ```
-  cd macro-creator
+  cd Macronaut
   ```
   
 
