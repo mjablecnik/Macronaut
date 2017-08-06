@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 
-  Copyright (c) 2016 Martin Jablečník
-  Authors: Martin Jablečník
+  Copyright (c) 2016-2017 Martin Jablecnik
+  Authors: Martin Jablecnik
   Description: Script for record macros
   
 """
