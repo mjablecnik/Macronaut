@@ -40,8 +40,8 @@ def record_macro(raw_file=RAW_FILE):
     while os.path.isfile(STOP_FILE):
         sleep(.005)
         changed, modifiers, keys = keylogger.fetch_keys()
-        if keys == 'q':
-            os.system("rm %s" % (STOP_FILE,))
+        #if keys == 'q':
+        #    os.system("rm %s" % (STOP_FILE,))
 
         if changed: 
             print_keys(time(), modifiers, keys)
