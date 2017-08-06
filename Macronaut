@@ -9,7 +9,7 @@
 
 action=${1}
 name=${2}
-macro_path=${HOME}/.config/Macronaut
+macro_path=${HOME}/.config/macronaut
 
 mkdir -p ${macro_path}
 
