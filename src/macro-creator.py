@@ -15,10 +15,12 @@ from time import sleep, time
 
 
 # Constants
-SCRIPT_PATH = os.path.dirname(sys.argv[0])
+#SCRIPT_PATH = os.path.dirname(sys.argv[0])
 
-STOP_FILE = SCRIPT_PATH + '/tmp/stop-rec'   # if doesn't exist so recording is stopped
-TMP_DIR = SCRIPT_PATH + '/tmp/keyrec/' 
+TMP_PATH = '/tmp/macro-creator'
+STOP_FILE = TMP_PATH + '/stop-rec'   # if doesn't exist so recording is stopped
+TMP_DIR = TMP_PATH + '/keyrec/' 
+
 MACRO_DIR = SCRIPT_PATH + '/tmp/macro/'
 
 RAW_FILE = TMP_DIR + 'macro-data'
@@ -112,8 +114,8 @@ def compile(events):
 
 
 # save generated code
-def save_macro(text, name='macro-output.py'):
-    file = open(MACRO_DIR+name, 'w')
+def save_macro(text, name='macro-output.py', macro_path=SCRIPT_PATH + '/tmp/macro/'):
+    file = open(macro_path+name, 'w')
 
     head = """#!/usr/bin/env python
 
@@ -157,11 +159,14 @@ def main():
             save_macro(generated_code)
 	elif sys.argv[1] == "--name":
             if len(sys.argv) > 2:
+                if sys.argv[3] == "--output-path":
+                    macro_path = sys.argv[4]
+
                 macro_name = sys.argv[2]
                 record_macro()		
                 parsed_data = parse(load_data())
                 generated_code = compile(parsed_data)
-                save_macro(generated_code, macro_name)
+                save_macro(generated_code, macro_name, macro_path)
             else:
                 print("You need type name!!")
                 print("For example:  'python macro-creator.py --name \"macro_name_example\"'")

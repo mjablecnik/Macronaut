@@ -17,7 +17,7 @@ if [[ ${action} == start ]]; then
   python /usr/bin/macro-creator --name ${name} --output-path ${macro_path} 
 
 elif [[ ${action} == stop ]]; then
-  rm /tmp/stop-rec
+  rm /tmp/macro-creator/stop-rec
 
 elif [[ ${action} == play ]]; then
 
