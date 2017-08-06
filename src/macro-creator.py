@@ -129,7 +129,8 @@ sleep(0.5)
 
 
 def prepare():
-    os.system("touch %s; mkdir -p %s" % (STOP_FILE, TMP_DIR))
+    os.system('mkdir -p ' + TMP_DIR)
+    os.system("touch " + STOP_FILE)
     os.system('mkdir -p ' + MACRO_DIR)
 
     keystate = {
