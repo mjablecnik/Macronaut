@@ -1,11 +1,11 @@
 #!/bin/bash
-"""
+#
+#  Copyright (c) 2017 Martin Jablecnik
+#  Authors: Martin Jablecnik
+#  Description: Wrapper for macro-creator
+#  
+#
 
-  Copyright (c) 2017 Martin Jablecnik
-  Authors: Martin Jablecnik
-  Description: Wrapper for macro-creator
-  
-"""
 
 action=${1}
 name=${2}

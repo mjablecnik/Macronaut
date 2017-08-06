@@ -15,7 +15,7 @@ from time import sleep, time
 
 
 # Constants
-#SCRIPT_PATH = os.path.dirname(sys.argv[0])
+SCRIPT_PATH = os.path.dirname(sys.argv[0])
 
 TMP_PATH = '/tmp/macro-creator'
 STOP_FILE = TMP_PATH + '/stop-rec'   # if doesn't exist so recording is stopped
@@ -115,7 +115,7 @@ def compile(events):
 
 # save generated code
 def save_macro(text, name='macro-output.py', macro_path=SCRIPT_PATH + '/tmp/macro/'):
-    file = open(macro_path+name, 'w')
+    file = open(macro_path+'/'+name, 'w')
 
     head = """#!/usr/bin/env python
 
