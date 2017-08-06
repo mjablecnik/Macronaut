@@ -1,0 +1,31 @@
+#!/bin/bash
+"""
+
+  Copyright (c) 2017 Martin Jablecnik
+  Authors: Martin Jablecnik
+  Description: Wrapper for macro-creator
+  
+"""
+
+action=${1}
+name=${2}
+macro_path=${HOME}/.config/Macronaut
+
+mkdir -p ${macro_path}
+
+if [[ ${action} == start ]]; then
+  python /usr/bin/macro-creator --name ${name} --output-path ${macro_path} 
+
+elif [[ ${action} == stop ]]; then
+  rm /tmp/stop-rec
+
+elif [[ ${action} == play ]]; then
+
+  if [[ -d ${macro_path} ]]; then
+    python ${macro_path}/${name}
+  else
+    echo "ERROR: Macro ${name} doesn't exist in path: ${macro_path}"
+  fi
+
+fi
+
