@@ -19,6 +19,7 @@ Macronaut is simple macro creator for simplification repetitive tasks.
 
   Run command:
   ```
+  pip install PyUserInput
   bash install.sh
   ```
   
@@ -34,6 +35,7 @@ Macronaut is simple macro creator for simplification repetitive tasks.
 
  - [pykeylogger](https://github.com/amoffat/pykeylogger): Python keylogger from Andrew Moffat.
  - [PyAutoGUI](https://github.com/asweigart/pyautogui): Cross-platform GUI automation Python module for human beings.
+ - [PyUserInput](https://github.com/PyUserInput/PyUserInput): Cross-platform control of the mouse and keyboard in python.
 
 
 
