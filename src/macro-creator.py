@@ -145,10 +145,10 @@ def prepare():
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--record', action='store_true', default=False, dest='record', help='Setup record')
-    parser.add_argument('--compile', action='store_true', default=False, dest='compile', help='Setup compile')
-    parser.add_argument('--name', action='store', default="macro_example", dest='name', help='Setup name')
-    parser.add_argument('--output-path', action='store', default=OUTPUT_PATH, dest='output_path', help='Setup macro OUTPUT_PATH')
+    parser.add_argument('--record', action='store_true', default=False, dest='record', help='Only record keyboard inputs and save into raw_data format.')
+    parser.add_argument('--compile', action='store_true', default=False, dest='compile', help='Compile raw_data format into python runable script which is saved into OUTPUT_PATH.')
+    parser.add_argument('--name', action='store', default="macro_example", dest='name', help='Change name of macro script.')
+    parser.add_argument('--output-path', action='store', default=OUTPUT_PATH, dest='output_path', help='Setup path where save generated macro script.')
     return parser.parse_args()
 
 
