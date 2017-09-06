@@ -12,6 +12,7 @@
 import getopt, sys, os, ast
 import keylogger
 from time import sleep, time
+import argparse
 
 
 # Constants
@@ -21,7 +22,7 @@ TMP_PATH = '/tmp/macro-creator'
 STOP_FILE = TMP_PATH + '/stop-rec'   # if doesn't exist so recording is stopped
 TMP_DIR = TMP_PATH + '/keyrec/' 
 
-MACRO_DIR = SCRIPT_PATH + '/tmp/macro/'
+OUTPUT_PATH = SCRIPT_PATH + '/tmp/macro/'
 
 RAW_FILE = TMP_DIR + 'macro-data'
 
@@ -40,8 +41,8 @@ def record_macro(raw_file=RAW_FILE):
     while os.path.isfile(STOP_FILE):
         sleep(.005)
         changed, modifiers, keys = keylogger.fetch_keys()
-        #if keys == 'q':
-        #    os.system("rm %s" % (STOP_FILE,))
+        if keys == 'q':
+            os.system("rm %s" % (STOP_FILE,))
 
         if changed: 
             print_keys(time(), modifiers, keys)
@@ -131,7 +132,7 @@ sleep(0.5)
 def prepare():
     os.system('mkdir -p ' + TMP_DIR)
     os.system("touch " + STOP_FILE)
-    os.system('mkdir -p ' + MACRO_DIR)
+    os.system('mkdir -p ' + OUTPUT_PATH)
 
     keystate = {
          'left ctrl': False,
@@ -142,40 +143,35 @@ def prepare():
          'right shift': False,
     }
 
-def help():
-    print("\n\nYou need run program with this parameters:")
-    print("--record      -- for record macro")
-    print("--compile     -- for complie macro")
-    print("--name        -- for record, compile and save macro under specific name")
-    print("\n\n")
+def parse_arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--record', action='store_true', default=False, dest='record', help='Setup record')
+    parser.add_argument('--compile', action='store_true', default=False, dest='compile', help='Setup compile')
+    parser.add_argument('--name', action='store', default="macro_example", dest='name', help='Setup name')
+    parser.add_argument('--output-path', action='store', default=OUTPUT_PATH, dest='output_path', help='Setup macro OUTPUT_PATH')
+    return parser.parse_args()
+
 
 def main():
     prepare()
-    if len(sys.argv) > 1:
-	if sys.argv[1] == "--record":
-            record_macro()		
-	elif sys.argv[1] == "--compile":
-            parsed_data = parse(load_data())
-            generated_code = compile(parsed_data)
-            save_macro(generated_code)
-	elif sys.argv[1] == "--name":
-            if len(sys.argv) > 2:
-                if sys.argv[3] == "--output-path":
-                    macro_path = sys.argv[4]
+    args = parse_arguments()
+    #print args.record
+    #print args.compile
+    #print args.name
+    #print args.output_path
 
-                macro_name = sys.argv[2]
-                record_macro()		
-                parsed_data = parse(load_data())
-                generated_code = compile(parsed_data)
-                save_macro(generated_code, macro_name, macro_path)
-            else:
-                print("You need type name!!")
-                print("For example:  'python macro-creator.py --name \"macro_name_example\"'")
-	elif sys.argv[1] == "--help" or sys.argv[1] == "-h" or sys.argv[1] == "help":
-            help()
+    if args.record:
+        record_macro()		
+    if args.compile:
+        parsed_data = parse(load_data())
+        generated_code = compile(parsed_data)
+        save_macro(generated_code, args.name, args.output_path)
     else:
-        help()
-    
+        record_macro()		
+        parsed_data = parse(load_data())
+        generated_code = compile(parsed_data)
+        save_macro(generated_code, args.name, args.output_path)
+
 
 
 if __name__ == "__main__":
