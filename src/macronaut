@@ -10,22 +10,25 @@
 action=${1}
 name=${2}
 macro_path=${HOME}/.config/macronaut
+if [[ -z $name ]]; then name=default_macro; fi
 
 mkdir -p ${macro_path}
 
-if [[ ${action} == start ]]; then
-  python /usr/bin/macro-creator --name ${name} --output-path ${macro_path} 
-
-elif [[ ${action} == stop ]]; then
-  rm /tmp/macro-creator/stop-rec
+if [[ ${action} == record ]]; then
+  python /usr/bin/macro-creator --record --compile --name ${name} --output-path ${macro_path} 
 
 elif [[ ${action} == play ]]; then
+  python /usr/bin/macro-creator --start --name ${name} --output-path ${macro_path} 
 
-  if [[ -d ${macro_path} ]]; then
-    python ${macro_path}/${name}
-  else
-    echo "ERROR: Macro ${name} doesn't exist in path: ${macro_path}"
-  fi
+elif [[ ${action} == rm || ${action} == remove ]]; then
+  rm -rf $macro_path/$name
+
+elif [[ ${action} == ls || ${action} == list ]]; then
+  echo -e "\nYou can play this macros:\n"
+  for i in $(ls $macro_path); do
+    echo -e "\t\t$i"
+  done
+  echo ""
 
 fi
 

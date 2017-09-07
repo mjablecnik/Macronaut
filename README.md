@@ -25,10 +25,11 @@ Macronaut is simple macro creator for simplification repetitive tasks.
   
   And now you can run macronaut in your shell by command:
   ```
-  macronaut start <name-macro>    -- start creating macro with specific name
-  macronaut stop <name-macro>     -- stop creating macro with specific name
-  macronaut play <name-macro>     -- play created macro
-  ```
+  macronaut record <name>    -- start creating macro with specific name
+  macronaut remove <name>    -- remove existing macro
+  macronaut play <name>      -- play created macro
+  macronaut list             -- list all macros
+
 
 
 ## Special thanks:

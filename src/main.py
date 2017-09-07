@@ -19,7 +19,8 @@ def prepare():
     os.system('mkdir -p ' + config.OUTPUT_PATH)
 
 def clear():
-    os.system("rm " + config.RAW_FILE)
+    os.system("rm -rf " + config.RAW_FILE)
+    os.system("rm -rf " + config.STOP_FILE)
 
     
 
@@ -44,9 +45,9 @@ def main():
     if args.compile:
         with open(config.RAW_FILE,'r') as f: 
             macro.compile(f.readlines(), args.output_path+'/'+args.name)
-        if not args.debug: clear()
     if args.start:
         os.system('bash '+args.output_path+'/'+args.name)
+    if not args.debug: clear()
 
 
 
