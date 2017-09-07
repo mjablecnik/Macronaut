@@ -34,7 +34,7 @@ Macronaut is simple macro creator for simplification repetitive tasks.
 ## Special thanks:
 
  - [pykeylogger](https://github.com/amoffat/pykeylogger): Python keylogger from Andrew Moffat.
- - [PyAutoGUI](https://github.com/asweigart/pyautogui): Cross-platform GUI automation Python module for human beings.
+ - [xdotool](http://www.semicomplete.com/projects/xdotool/): Tool lets you simulate keyboard input and mouse activity.
  - [PyUserInput](https://github.com/PyUserInput/PyUserInput): Cross-platform control of the mouse and keyboard in python.
 
 

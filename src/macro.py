@@ -67,48 +67,40 @@ def is_hotkey(event):
             return True
     return False
 
+
 # generating of macro code
-def compile(raw_data):
+def compile(raw_data, file):
     events = parse_data(raw_data)
     text = ''
     hotkey_str = ''
     for event in events:
         if is_hotkey(event):
             hotkeys = event[1]
-            hotkey_str = "hotkey('"
+            hotkey_str = "xdotool key "
             for hotkey, value in hotkeys.items():
                 if value:                                # if hotkey is pressed
                      hotkey_str += hotkey.split(' ')[1]  #add name of key
-                     hotkey_str += "', '"
-            hotkey_str += "%s')\n" % event[0]
+                     hotkey_str += "+"
+            hotkey_str += "%s\n" % event[0]
             text += hotkey_str
         else:
             key = event[0]
             if key == '<enter>':
-                text += "typewrite(['enter'])\n"
+                text += "xdotool key Return\n"
             elif key == '<tab>':
-                text += "typewrite(['tab'])\n"
+                text += "xdotool key Tab\n"
             elif key == '<caps lock>':
-                text += "typewrite(['esc'])\n"
+                text += "xdotool key Escape\n"
             else:
-                text += "typewrite('%s')\n" % key 
+                text += "xdotool key %s\n" % key 
 
-    return text
-
-
-
-
-
-def save(text, name, macro_path):
-    file = open(macro_path+'/'+name, 'w')
-
-    head = """#!/usr/bin/env python
-
-from pyautogui import hotkey, typewrite, click
-from time import sleep
-sleep(0.5)
-"""
-    file.write(head+text)
+    file = open(file, 'w')
+    file.write(text)
     file.close()
+
+
+
+
+
 
 

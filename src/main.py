@@ -34,26 +34,19 @@ def parse_arguments():
     return parser.parse_args()
 
 
+
 def main():
     prepare()
     args = parse_arguments()
-    #print args.record
-    #print args.compile
-    #print args.name
-    #print args.output_path
 
     if args.record:
         macro.record(config.RAW_FILE)		
     if args.compile:
-        file = open(config.RAW_FILE, 'r')
-        raw_data = file.readlines()
-        generated_code = macro.compile(raw_data)
-        macro.save(generated_code, args.name, args.output_path)
-        file.close()
+        with open(config.RAW_FILE,'r') as f: 
+            macro.compile(f.readlines(), args.output_path+'/'+args.name)
         if not args.debug: clear()
     if args.start:
-        os.system('python '+args.output_path+'/'+args.name+' > /dev/null')
-
+        os.system('bash '+args.output_path+'/'+args.name)
 
 
 
