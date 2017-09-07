@@ -12,16 +12,8 @@ import os, sys
 from time import sleep, time
 import keylogger
 import ast
+import config
 
-SCRIPT_PATH = os.path.dirname(sys.argv[0])
-
-TMP_PATH = '/tmp/macro-creator'
-TMP_DIR = TMP_PATH + '/keyrec/' 
-STOP_FILE = TMP_PATH + '/stop-rec'   # if doesn't exist so recording is stopped
-
-OUTPUT_PATH = SCRIPT_PATH + '/tmp/macro/'
-
-RAW_FILE = TMP_DIR + 'macro-data'
 
 keystate = {
      'left ctrl': False,
@@ -41,11 +33,11 @@ def record(raw_file):
         print(text_format)
 
 
-    while os.path.isfile(STOP_FILE):
+    while os.path.isfile(config.STOP_FILE):
         sleep(.005)
         changed, modifiers, keys = keylogger.fetch_keys()
         if keys == 'q':
-            os.system("rm %s" % (STOP_FILE,))
+            os.system("rm %s" % (config.STOP_FILE,))
 
         if changed: 
             print_keys(time(), modifiers, keys)
@@ -107,7 +99,7 @@ def compile(raw_data):
 
 
 
-def save(text, name='macro-output.py', macro_path='/tmp/macro/'):
+def save(text, name, macro_path):
     file = open(macro_path+'/'+name, 'w')
 
     head = """#!/usr/bin/env python
