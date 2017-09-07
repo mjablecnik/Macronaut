@@ -29,8 +29,7 @@ Macronaut is simple macro creator for simplification repetitive tasks.
   macronaut remove <name>    -- remove existing macro
   macronaut play <name>      -- play created macro
   macronaut list             -- list all macros
-
-
+  ```
 
 ## Special thanks:
 
