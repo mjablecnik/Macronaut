@@ -4,33 +4,36 @@
 
   Copyright (c) 2016-2017 Martin Jablecnik
   Authors: Martin Jablecnik
-  Description: Script for record macros
+  Description: Macro library
   
 """
 
-
-import getopt, sys, os, ast
-import keylogger
+import os, sys
 from time import sleep, time
-import argparse
+import keylogger
+import ast
 
-
-# Constants
 SCRIPT_PATH = os.path.dirname(sys.argv[0])
 
 TMP_PATH = '/tmp/macro-creator'
-STOP_FILE = TMP_PATH + '/stop-rec'   # if doesn't exist so recording is stopped
 TMP_DIR = TMP_PATH + '/keyrec/' 
+STOP_FILE = TMP_PATH + '/stop-rec'   # if doesn't exist so recording is stopped
 
 OUTPUT_PATH = SCRIPT_PATH + '/tmp/macro/'
 
 RAW_FILE = TMP_DIR + 'macro-data'
 
+keystate = {
+     'left ctrl': False,
+     'left alt': False,
+     'left shift': False,
+     'right ctrl': False,
+     'right alt': False,
+     'right shift': False,
+}
 
 
-
-# record macro
-def record_macro(raw_file=RAW_FILE):
+def record(raw_file):
     file = open(raw_file, 'w')
     def print_keys(t, modifiers, keys): 
         text_format = ("%.2f|%r|%r\n" % (t, keys, modifiers))
@@ -50,17 +53,7 @@ def record_macro(raw_file=RAW_FILE):
     file.close()
 
 
-
-# load code from recorder file
-def load_data():
-    file = open(RAW_FILE, 'r')
-    lines = file.readlines()
-    file.close()
-    return lines
-
-
-# Parse code
-def parse(lines):
+def parse_data(lines):
     events = []
     event = 0
     for line in lines:
@@ -74,7 +67,6 @@ def parse(lines):
     return events
 
 
-
 # check if hotkey is pressed
 def is_hotkey(event):
     hotkeys = event[1]
@@ -83,8 +75,9 @@ def is_hotkey(event):
             return True
     return False
 
-# generating of code
-def compile(events):
+# generating of macro code
+def compile(raw_data):
+    events = parse_data(raw_data)
     text = ''
     hotkey_str = ''
     for event in events:
@@ -109,13 +102,12 @@ def compile(events):
                 text += "typewrite('%s')\n" % key 
 
     return text
-#    hotkey('ctrl', 'alt', 'h')
-
-    
 
 
-# save generated code
-def save_macro(text, name='macro-output.py', macro_path=SCRIPT_PATH + '/tmp/macro/'):
+
+
+
+def save(text, name='macro-output.py', macro_path='/tmp/macro/'):
     file = open(macro_path+'/'+name, 'w')
 
     head = """#!/usr/bin/env python
@@ -128,51 +120,3 @@ sleep(0.5)
     file.close()
 
 
-
-def prepare():
-    os.system('mkdir -p ' + TMP_DIR)
-    os.system("touch " + STOP_FILE)
-    os.system('mkdir -p ' + OUTPUT_PATH)
-
-    keystate = {
-         'left ctrl': False,
-         'left alt': False,
-         'left shift': False,
-         'right ctrl': False,
-         'right alt': False,
-         'right shift': False,
-    }
-
-def parse_arguments():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--record', action='store_true', default=False, dest='record', help='Only record keyboard inputs and save into raw_data format.')
-    parser.add_argument('--compile', action='store_true', default=False, dest='compile', help='Compile raw_data format into python runable script which is saved into OUTPUT_PATH.')
-    parser.add_argument('--name', action='store', default="macro_example", dest='name', help='Change name of macro script.')
-    parser.add_argument('--output-path', action='store', default=OUTPUT_PATH, dest='output_path', help='Setup path where save generated macro script.')
-    return parser.parse_args()
-
-
-def main():
-    prepare()
-    args = parse_arguments()
-    #print args.record
-    #print args.compile
-    #print args.name
-    #print args.output_path
-
-    if args.record:
-        record_macro()		
-    if args.compile:
-        parsed_data = parse(load_data())
-        generated_code = compile(parsed_data)
-        save_macro(generated_code, args.name, args.output_path)
-    else:
-        record_macro()		
-        parsed_data = parse(load_data())
-        generated_code = compile(parsed_data)
-        save_macro(generated_code, args.name, args.output_path)
-
-
-
-if __name__ == "__main__":
-    main()
