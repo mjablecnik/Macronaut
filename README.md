@@ -19,7 +19,7 @@ Macronaut is simple macro creator for simplification repetitive tasks.
 
   Run command:
   ```
-  pip install PyUserInput
+  pip install PyUserInput pynput==1.3.7 
   bash install.sh
   ```
   

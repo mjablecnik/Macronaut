@@ -13,6 +13,8 @@ from time import sleep, time
 import keylogger
 import ast
 import config
+from pynput import mouse
+import threading
 
 
 keystate = {
@@ -25,23 +27,55 @@ keystate = {
 }
 
 
+
 def record(raw_file):
+    def record_mouse():
+        f = open(raw_file, 'a')
+        def on_move(x, y):
+            f.write('mouse|move|{0}\n'.format( (x, y)))
+            print('mouse|move|{0}\n'.format( (x, y)))
+
+        def on_click(x, y, button, pressed):
+            f.write('{0}|{1}\n'.format( 'mouse press' if pressed else 'release', (x, y)))
+            print('{0}|{1}\n'.format( 'mouse press' if pressed else 'release', (x, y)))
+
+        def on_scroll(x, y, dx, dy):
+            f.write('mouse|scroll|{0}|{1}\n'.format( 'down' if dy < 0 else 'up', (x, y)))
+            print('mouse|scroll|{0}|{1}\n'.format( 'down' if dy < 0 else 'up', (x, y)))
+            if not pressed:
+                # Stop listener
+                return False
+
+        with mouse.Listener( on_move=on_move, on_click=on_click, on_scroll=on_scroll) as listener:
+            listener.join()
+        f.close()
+
+
+    def record_keyboard():
+        f = open(raw_file, 'a')
+        while os.path.isfile(config.STOP_FILE):
+            sleep(.005)
+            changed, modifiers, keys = keylogger.fetch_keys()
+            if keys == 'q':
+                os.system("rm %s" % (config.STOP_FILE,))
+
+            if changed: 
+                text_format = ("%.2f|%r|%r\n" % (time(), keys, modifiers))
+                f.write(text_format)
+                print(text_format)
+        f.close()
+
     f = open(raw_file, 'w')
-
-
-    while os.path.isfile(config.STOP_FILE):
-        sleep(.005)
-        changed, modifiers, keys = keylogger.fetch_keys()
-        if keys == 'q':
-            os.system("rm %s" % (config.STOP_FILE,))
-
-        if changed: 
-            text_format = ("%.2f|%r|%r\n" % (time(), keys, modifiers))
-            f.write(text_format)
-            print(text_format)
+    f.close()
+    threads = []
+    t = threading.Thread(target=record_keyboard)
+    threads.append(t)
+    t.start()
+    t = threading.Thread(target=record_mouse)
+    threads.append(t)
+    t.start()
 
     print "closing"
-    f.close()
 
 
 def parse_data(lines):

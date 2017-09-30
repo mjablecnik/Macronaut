@@ -1,34 +1,26 @@
 #!/usr/bin/python
 
-import logging
-from socket import gethostname
-from pymouse import PyMouse
-import random
-import time
-from signal import signal, SIGINT
-daemon = True
+from pynput import mouse
 
+def on_move(x, y):
+    print('Pointer moved to {0}'.format(
+        (x, y)))
 
+def on_click(x, y, button, pressed):
+    print('{0} at {1}'.format( 'Pressed' if pressed else 'Released', (x, y)))
+    if not pressed:
+        # Stop listener
+        return False
 
-from pymouse import PyMouseEvent
+def on_scroll(x, y, dx, dy):
+    print('Scrolled {0} at {1}'.format(
+        'down' if dy < 0 else 'up',
+        (x, y)))
 
-class event(PyMouseEvent):
-    def __init__(self):
-        super(event, self).__init__()
-        FORMAT = '%(asctime)-15s ' + gethostname() + ' touchlogger %(levelname)s %(message)s'
-        logging.basicConfig(filename='mouse.log', level=logging.DEBUG, format=FORMAT)
-
-    def move(self, x, y):
-        pass
-
-    def click(self, x, y, button, press):
-        if press:
-            logging.info('{ "event": "click", "type": "press", "button":'+ str(button) +', "x": "' + str(x) + '", "y": "' + str(y) + '"}')
-        else:
-            logging.info('{ "event": "click", "type": "release", "button":'+ str(button) +', "x": "' + str(x) + '", "y": "' + str(y) + '"}')
-
-e = event()
-e.capture = False
-e.daemon = False
-e.start()
+# Collect events until released
+with mouse.Listener(
+        on_move=on_move,
+        on_click=on_click,
+        on_scroll=on_scroll) as listener:
+    listener.join()
 
