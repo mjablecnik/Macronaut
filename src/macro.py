@@ -26,11 +26,7 @@ keystate = {
 
 
 def record(raw_file):
-    file = open(raw_file, 'w')
-    def print_keys(t, modifiers, keys): 
-        text_format = ("%.2f|%r|%r\n" % (t, keys, modifiers))
-        file.write(text_format)
-        print(text_format)
+    f = open(raw_file, 'w')
 
 
     while os.path.isfile(config.STOP_FILE):
@@ -40,9 +36,12 @@ def record(raw_file):
             os.system("rm %s" % (config.STOP_FILE,))
 
         if changed: 
-            print_keys(time(), modifiers, keys)
+            text_format = ("%.2f|%r|%r\n" % (time(), keys, modifiers))
+            f.write(text_format)
+            print(text_format)
 
-    file.close()
+    print "closing"
+    f.close()
 
 
 def parse_data(lines):

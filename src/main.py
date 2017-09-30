@@ -28,8 +28,8 @@ def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument('--record', action='store_true', default=False, dest='record', help='Only record keyboard inputs and save into raw_data format.')
     parser.add_argument('--compile', action='store_true', default=False, dest='compile', help='Compile raw_data format into python runable script which is saved into OUTPUT_PATH.')
-    parser.add_argument('--start', action='store_true', default=False, dest='start', help='Play macro script.')
-    parser.add_argument('--debug', action='store_true', default=False, dest='debug', help='Run program in debug mode.')
+    parser.add_argument('--play', action='store_true', default=False, dest='play', help='Play macro script.')
+    parser.add_argument('-d', action='store_true', default=False, dest='debug', help='Run program in debug mode.')
     parser.add_argument('--name', action='store', default="macro_example", dest='name', help='Change name of macro script.')
     parser.add_argument('--output-path', action='store', default=config.OUTPUT_PATH, dest='output_path', help='Setup path where save generated macro script.')
     return parser.parse_args()
@@ -39,15 +39,16 @@ def parse_arguments():
 def main():
     prepare()
     args = parse_arguments()
+    print config.RAW_FILE
 
     if args.record:
         macro.record(config.RAW_FILE)		
     if args.compile:
         with open(config.RAW_FILE,'r') as f: 
             macro.compile(f.readlines(), args.output_path+'/'+args.name)
-    if args.start:
+    if args.play:
         os.system('bash '+args.output_path+'/'+args.name)
-    if not args.debug: clear()
+    #if not args.debug: clear()
 
 
 

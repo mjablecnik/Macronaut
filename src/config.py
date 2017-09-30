@@ -11,7 +11,7 @@ import os, sys
 from os.path import expanduser
 home = expanduser("~")
 
-DEVEL=False
+DEVEL=True
 
 if DEVEL:
     # Development

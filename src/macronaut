@@ -18,7 +18,7 @@ if [[ ${action} == record ]]; then
   python /usr/bin/macro-creator --record --compile --name ${name} --output-path ${macro_path} 
 
 elif [[ ${action} == play ]]; then
-  python /usr/bin/macro-creator --start --name ${name} --output-path ${macro_path} 
+  python /usr/bin/macro-creator --play --name ${name} --output-path ${macro_path} 
 
 elif [[ ${action} == rm || ${action} == remove ]]; then
   rm -rf $macro_path/$name
