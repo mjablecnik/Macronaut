@@ -71,9 +71,9 @@ def record(raw_file):
     t = threading.Thread(target=record_keyboard)
     threads.append(t)
     t.start()
-    t = threading.Thread(target=record_mouse)
-    threads.append(t)
-    t.start()
+    #t = threading.Thread(target=record_mouse)
+    #threads.append(t)
+    #t.start()
 
     print "closing"
 
