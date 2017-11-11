@@ -19,23 +19,21 @@ Macronaut is simple macro creator for simplification repetitive tasks.
 
   Run command:
   ```
-  pip install PyUserInput pynput==1.3.7 
+  pip install pynput==1.3.7 
   bash install.sh
   ```
   
   And now you can run macronaut in your shell by command:
   ```
-  macronaut record <name>    -- start creating macro with specific name
-  macronaut remove <name>    -- remove existing macro
-  macronaut play <name>      -- play created macro
-  macronaut list             -- list all macros
+  macronaut --record           -- record macro ( end recording by <Esc> )
+  macronaut --compile <name>   -- compile macro
+  macronaut --play <name>      -- play macro
   ```
 
 ## Special thanks:
 
- - [pykeylogger](https://github.com/amoffat/pykeylogger): Python keylogger from Andrew Moffat.
  - [xdotool](http://www.semicomplete.com/projects/xdotool/): Tool lets you simulate keyboard input and mouse activity.
- - [PyUserInput](https://github.com/PyUserInput/PyUserInput): Cross-platform control of the mouse and keyboard in python.
+ - [Pynput](https://github.com/moses-palmer/pynput): Library for control and monitor input devices.
 
 
 
