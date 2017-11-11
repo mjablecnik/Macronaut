@@ -17,14 +17,9 @@ from pynput import mouse, keyboard
 import threading
 
 
-keystate = {
-     'left ctrl': False,
-     'left alt': False,
-     'left shift': False,
-     'right ctrl': False,
-     'right alt': False,
-     'right shift': False,
-}
+def write_line(file, text):
+    file.write( text )
+    print( text )
 
 
 def record(raw_file):
@@ -33,12 +28,10 @@ def record(raw_file):
     f = open(raw_file, 'a')
 
     def on_press(key):
-        f.write( 'keyboard|press|{0}\n'.format(key) )
-        print( 'keyboard|press|{0}\n'.format(key) )
+        write_line( f, 'keyboard|press|{0}\n'.format(key) )
 
     def on_release(key):
-        f.write( 'keyboard|release|{0}\n'.format(key) )
-        print( 'keyboard|release|{0}\n'.format(key) )
+        write_line( f, 'keyboard|release|{0}\n'.format(key) )
         if key == keyboard.Key.esc:
             # Stop listener
             return False
@@ -49,18 +42,14 @@ def record(raw_file):
 
 
 
-
     def on_move(x, y):
-        f.write('mouse|move|{0}\n'.format( (x, y)))
-        print('mouse|move|{0}\n'.format( (x, y)))
+        write_line( f, 'mouse|move|{0}\n'.format( (x, y)))
 
     def on_click(x, y, button, pressed):
-        f.write('{0}|{1}\n'.format( 'mouse press' if pressed else 'release', (x, y)))
-        print('{0}|{1}\n'.format( 'mouse press' if pressed else 'release', (x, y)))
+        write_line( f, 'mouse|{0}|{1}\n'.format( 'press' if pressed else 'release', (x, y)))
 
     def on_scroll(x, y, dx, dy):
-        f.write('mouse|scroll|{0}|{1}\n'.format( 'down' if dy < 0 else 'up', (x, y)))
-        print('mouse|scroll|{0}|{1}\n'.format( 'down' if dy < 0 else 'up', (x, y)))
+        write_line( f, 'mouse|scroll|{0}|{1}\n'.format( 'down' if dy < 0 else 'up', (x, y)))
 
     t2 = mouse.Listener( on_move=on_move, on_click=on_click, on_scroll=on_scroll)
     t2.start()
