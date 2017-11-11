@@ -27,79 +27,49 @@ keystate = {
 }
 
 
-class ServiceExit(Exception): pass
-
-class Record(threading.Thread):
- 
-    def __init__(self, job):
-        threading.Thread.__init__(self)
-        self.shutdown_flag = threading.Event()
-        self.job = job
- 
-    def run(self):
-        #print('Thread #%s started' % self.ident)
-
-        while not self.shutdown_flag.is_set():
-            self.job()
- 
-        #print('Thread #%s stopped' % self.ident)
-
-
 def record(raw_file):
     f = open(raw_file, 'w')
     f.close()
     f = open(raw_file, 'a')
 
-    try:
+    def on_press(key):
+        f.write( 'keyboard|press|{0}\n'.format(key) )
+        print( 'keyboard|press|{0}\n'.format(key) )
+
+    def on_release(key):
+        f.write( 'keyboard|release|{0}\n'.format(key) )
+        print( 'keyboard|release|{0}\n'.format(key) )
+        if key == keyboard.Key.esc:
+            # Stop listener
+            return False
 
 
-         
-        def on_press(key):
-            print('alphanumeric key {0} pressed'.format(key))
-            try:
-                if key.char == 'q':
-                    raise ServiceExit
-            except AttributeError:
-                print('special key {0} pressed'.format(key))
-
-        def on_release(key):
-            print('{0} released'.format(key))
-            if key == keyboard.Key.esc:
-                # Stop listener
-                return False
-
-
-        t1 = keyboard.Listener(on_press=on_press, on_release=on_release)
-        t1.start()
+    t1 = keyboard.Listener(on_press=on_press, on_release=on_release)
+    t1.start()
 
 
 
 
+    def on_move(x, y):
+        f.write('mouse|move|{0}\n'.format( (x, y)))
+        print('mouse|move|{0}\n'.format( (x, y)))
 
-        def on_move(x, y):
-            f.write('mouse|move|{0}\n'.format( (x, y)))
-            print('mouse|move|{0}\n'.format( (x, y)))
+    def on_click(x, y, button, pressed):
+        f.write('{0}|{1}\n'.format( 'mouse press' if pressed else 'release', (x, y)))
+        print('{0}|{1}\n'.format( 'mouse press' if pressed else 'release', (x, y)))
 
-        def on_click(x, y, button, pressed):
-            f.write('{0}|{1}\n'.format( 'mouse press' if pressed else 'release', (x, y)))
-            print('{0}|{1}\n'.format( 'mouse press' if pressed else 'release', (x, y)))
+    def on_scroll(x, y, dx, dy):
+        f.write('mouse|scroll|{0}|{1}\n'.format( 'down' if dy < 0 else 'up', (x, y)))
+        print('mouse|scroll|{0}|{1}\n'.format( 'down' if dy < 0 else 'up', (x, y)))
 
-        def on_scroll(x, y, dx, dy):
-            f.write('mouse|scroll|{0}|{1}\n'.format( 'down' if dy < 0 else 'up', (x, y)))
-            print('mouse|scroll|{0}|{1}\n'.format( 'down' if dy < 0 else 'up', (x, y)))
+    t2 = mouse.Listener( on_move=on_move, on_click=on_click, on_scroll=on_scroll)
+    t2.start()
 
-        t2 = mouse.Listener( on_move=on_move, on_click=on_click, on_scroll=on_scroll)
-        t2.start()
+    while t1.running:
+        sleep(0.1)
+        if not t1.running:
+            t2.stop()
 
-        while t1.running:
-            sleep(1)
-            if not t1.running:
-                t2.stop()
-
-    except ServiceExit:
-        t1.stop()
-        t1.join()
-        t2.join()
 
     f.close()
     print "closing"
