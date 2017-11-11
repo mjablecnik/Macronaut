@@ -10,11 +10,9 @@
 
 import os, sys
 from time import sleep, time
-import keylogger
 import ast
 import config
 from pynput import mouse, keyboard
-import threading
 
 
 def write_line(file, text):
