@@ -27,10 +27,48 @@ keystate = {
 }
 
 
+class Record(threading.Thread):
+ 
+    def __init__(self, job):
+        threading.Thread.__init__(self)
+        self.shutdown_flag = threading.Event()
+        self.job = job
+ 
+    def run(self):
+        print('Thread #%s started' % self.ident)
+
+        while not self.shutdown_flag.is_set():
+            self.job()
+ 
+        # ... Clean shutdown code here ...
+        print('Thread #%s stopped' % self.ident)
+
+
+class ServiceExit(Exception): pass
+
 
 def record(raw_file):
-    def record_mouse():
+    f = open(raw_file, 'w')
+    f.close()
+    def record_keyboard():
         f = open(raw_file, 'a')
+        while os.path.isfile(config.STOP_FILE):
+            sleep(.005)
+            changed, modifiers, keys = keylogger.fetch_keys()
+            if keys == 'q':
+                raise ServiceExit
+
+            if changed: 
+                text_format = ("%.2f|%r|%r\n" % (time(), keys, modifiers))
+                f.write(text_format)
+                print(text_format)
+        f.close()
+
+
+    f = open(raw_file, 'a')
+    try:
+        t1 = Record(record_keyboard)
+        t1.start()
         def on_move(x, y):
             f.write('mouse|move|{0}\n'.format( (x, y)))
             print('mouse|move|{0}\n'.format( (x, y)))
@@ -46,34 +84,23 @@ def record(raw_file):
                 # Stop listener
                 return False
 
-        with mouse.Listener( on_move=on_move, on_click=on_click, on_scroll=on_scroll) as listener:
-            listener.join()
-        f.close()
+        t2 = mouse.Listener( on_move=on_move, on_click=on_click, on_scroll=on_scroll)
+        t2.start()
 
+        while t1.isAlive():
+            sleep(1)
+            if not t1.isAlive():
+                t2.stop()
 
-    def record_keyboard():
-        f = open(raw_file, 'a')
-        while os.path.isfile(config.STOP_FILE):
-            sleep(.005)
-            changed, modifiers, keys = keylogger.fetch_keys()
-            if keys == 'q':
-                os.system("rm %s" % (config.STOP_FILE,))
-
-            if changed: 
-                text_format = ("%.2f|%r|%r\n" % (time(), keys, modifiers))
-                f.write(text_format)
-                print(text_format)
-        f.close()
-
-    f = open(raw_file, 'w')
+    except ServiceExit:
+        # Terminate the running threads.
+        # Set the shutdown flag on each thread to trigger a clean shutdown of each thread.
+        t1.shutdown_flag.set()
+        
+        # Wait for the threads to close...
+        t1.join()
+        t2.join()
     f.close()
-    threads = []
-    t = threading.Thread(target=record_keyboard)
-    threads.append(t)
-    t.start()
-    #t = threading.Thread(target=record_mouse)
-    #threads.append(t)
-    #t.start()
 
     print "closing"
 
