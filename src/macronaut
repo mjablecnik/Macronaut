@@ -44,8 +44,7 @@ def main():
     if args.record:
         macro.record(config.RAW_FILE)		
     if args.compile:
-        with open(config.RAW_FILE,'r') as f: 
-            macro.compile(f.readlines(), args.output_path+'/'+args.name)
+        macro.compile(config.RAW_FILE, args.output_path+'/'+args.name)
     if args.play:
         os.system('bash '+args.output_path+'/'+args.name)
     #if not args.debug: clear()

@@ -17,7 +17,7 @@ from pynput import mouse, keyboard
 
 def write_line(file, text):
     file.write( text )
-    print( text )
+    print( text.splitlines()[0] )
 
 
 def record(raw_file):
@@ -47,7 +47,7 @@ def record(raw_file):
         write_line( f, 'mouse|{0}|{1}\n'.format( 'press' if pressed else 'release', (x, y)))
 
     def on_scroll(x, y, dx, dy):
-        write_line( f, 'mouse|scroll|{0}|{1}\n'.format( 'down' if dy < 0 else 'up', (x, y)))
+        write_line( f, 'mouse|scroll-{0}|{1}\n'.format( 'down' if dy < 0 else 'up', (x, y)))
 
     t2 = mouse.Listener( on_move=on_move, on_click=on_click, on_scroll=on_scroll)
     t2.start()
@@ -62,58 +62,62 @@ def record(raw_file):
     print "closing"
 
 
-def parse_data(lines):
-    events = []
-    event = 0
-    for line in lines:
-        event += 1
-        keys = line.split('|')
-        key = keys[1]
-        keystate = ast.literal_eval(keys[2])
-        if key != 'None': 
-            key = key[1:-1]
-            events.append([key, keystate])
-    return events
 
 
-# check if hotkey is pressed
-def is_hotkey(event):
-    hotkeys = event[1]
-    for hotkey, value in hotkeys.items():
-        if value:                                # if hotkey is pressed
-            return True
-    return False
+def compile_keyboard(f, data):
+    if data['event'] == 'press':
+        value = data['value']
+        write_line(f, 'xdootool keydown {0}\n'.format( value if value[0] != 'u' else value[2:-1] ))
 
+def compile_mouse(f, data):
+    pass
 
 # generating of macro code
-def compile(raw_data, file):
-    events = parse_data(raw_data)
-    text = ''
-    hotkey_str = ''
-    for event in events:
-        if is_hotkey(event):
-            hotkeys = event[1]
-            hotkey_str = "xdotool key "
-            for hotkey, value in hotkeys.items():
-                if value:                                # if hotkey is pressed
-                     hotkey_str += hotkey.split(' ')[1]  #add name of key
-                     hotkey_str += "+"
-            hotkey_str += "%s\n" % event[0]
-            text += hotkey_str
-        else:
-            key = event[0]
-            if key == '<enter>':
-                text += "xdotool key Return\n"
-            elif key == '<tab>':
-                text += "xdotool key Tab\n"
-            elif key == '<caps lock>':
-                text += "xdotool key Escape\n"
-            else:
-                text += "xdotool key %s\n" % key 
+def compile(raw_file, output_file):
+    with open(raw_file,'r') as f: 
+        lines = f.read().splitlines()
 
-    file = open(file, 'w')
-    file.write(text)
-    file.close()
+    f = open(output_file, 'w')
+    f.close()
+    f = open(output_file, 'a')
+
+    for line in lines:
+        data = line.split('|')
+        data = dict(zip({ "input", "value", "event" }, data))
+
+        if data['input'] == 'keyboard':
+            compile_keyboard(f, data)
+        elif data['input'] == 'mouse':
+            compile_mouse(f, data)
+
+    f.close()
+
+    #text = ''
+    #hotkey_str = ''
+    #for event in events:
+    #    if is_hotkey(event):
+    #        hotkeys = event[1]
+    #        hotkey_str = "xdotool key "
+    #        for hotkey, value in hotkeys.items():
+    #            if value:                                # if hotkey is pressed
+    #                 hotkey_str += hotkey.split(' ')[1]  #add name of key
+    #                 hotkey_str += "+"
+    #        hotkey_str += "%s\n" % event[0]
+    #        text += hotkey_str
+    #    else:
+    #        key = event[0]
+    #        if key == '<enter>':
+    #            text += "xdotool key Return\n"
+    #        elif key == '<tab>':
+    #            text += "xdotool key Tab\n"
+    #        elif key == '<caps lock>':
+    #            text += "xdotool key Escape\n"
+    #        else:
+    #            text += "xdotool key %s\n" % key 
+
+    #file = open(file, 'w')
+    #file.write(text)
+    #file.close()
 
 
 
