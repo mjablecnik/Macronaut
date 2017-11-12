@@ -26,14 +26,21 @@ Macronaut is simple macro creator for simplification repetitive tasks.
     --version                       Show program's version number and exit
   ```
 
-## Special thanks:
+
+### Examples:
+   ```
+   $ macronaut --record --compile --name macro1
+   $ macronaut --play --name macro1
+   ```
+
+### Special thanks:
 
  - [xdotool](http://www.semicomplete.com/projects/xdotool/): Tool lets you simulate keyboard input and mouse activity.
  - [Pynput](https://github.com/moses-palmer/pynput): Library for control and monitor input devices.
 
 
 
-## Authors:
+### Authors:
 
  - Martin Jablečník
 

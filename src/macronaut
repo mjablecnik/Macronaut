@@ -41,7 +41,7 @@ def main():
     #print config.RAW_FILE
 
     if args.record:
-        macro.record(verbose)		
+        macro.record()		
     if args.compile:
         macro.compile(args.output_path+'/'+args.name, float(args.speed))
     if args.play:
