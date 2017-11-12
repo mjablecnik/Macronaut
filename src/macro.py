@@ -41,13 +41,13 @@ def record(raw_file):
 
 
     def on_move(x, y):
-        write_line( f, 'mouse|move|{0}\n'.format( (x, y)))
+        write_line( f, 'mouse|move|{0}|{1}\n'.format( (x, y), round(time() - start_time, 4) ))
 
     def on_click(x, y, button, pressed):
-        write_line( f, 'mouse|{0}|{1}\n'.format( 'press' if pressed else 'release', (x, y)))
+        write_line( f, 'mouse|{0}|{1}|{2}\n'.format( 'press' if pressed else 'release', button, round(time() - start_time, 4) ))
 
     def on_scroll(x, y, dx, dy):
-        write_line( f, 'mouse|scroll-{0}|{1}\n'.format( 'down' if dy < 0 else 'up', (x, y)))
+        write_line( f, 'mouse|scroll-{0}|{1}|{2}\n'.format( 'down' if dy < 0 else 'up', (x, y), round(time() - start_time, 4) ))
 
     t2 = mouse.Listener( on_move=on_move, on_click=on_click, on_scroll=on_scroll)
     t2.start()
@@ -64,7 +64,7 @@ def record(raw_file):
 
 
 def compile_keyboard(f, data):
-    def get_value_format(value):                                                  
+    def transform_value(value):                                                  
         if value[0] == 'u':
             return keys.transform(value[2:-1].replace('\\x','U'))
 
@@ -73,18 +73,40 @@ def compile_keyboard(f, data):
             return keys.transform(special_key)
 
 
-    formated_value = get_value_format(unicode(data['value']))
+    transformed_value = transform_value(unicode(data['value']))
     if data['event'] == 'press':
-        if formated_value != None:
-            write_line(f, 'xdotool keydown {0}\n'.format( formated_value ))
+        if transformed_value != None:
+            write_line(f, 'xdotool keydown {0}\n'.format( transformed_value ))
 
     elif data['event'] == 'release':
-        if formated_value != None:
-            write_line(f, 'xdotool keyup {0}\n'.format( formated_value ))
+        if transformed_value != None:
+            write_line(f, 'xdotool keyup {0}\n'.format( transformed_value ))
 
 
 def compile_mouse(f, data):
-    pass
+    def transform_value(value):
+        if value == "Button.left":
+            return 1
+        elif value == "Button.middle":
+            return 2
+        elif value == "Button.right":
+            return 3
+
+    transformed_value = transform_value(data['value'])
+    if data['event'] == 'press':    
+        if transformed_value != None:
+            write_line(f, 'xdotool mousedown {0}\n'.format( transformed_value ))
+    elif data['event'] == 'release':
+        if transformed_value != None:
+            write_line(f, 'xdotool mouseup {0}\n'.format( transformed_value ))
+    elif data['event'] == 'move':
+        x, y = eval(data['value'])
+        write_line(f, 'xdotool mousemove {0} {1}\n'.format( x, y ))
+    elif data['event'] == 'scroll-down':
+        write_line(f, 'xdotool click 5\n')
+    elif data['event'] == 'scroll-up':
+        write_line(f, 'xdotool click 4\n')
+        
 
 
 # generating of macro code
