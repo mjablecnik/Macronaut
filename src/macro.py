@@ -14,6 +14,7 @@ import config, keys
 from pynput import mouse, keyboard
 
 
+
 def write_line(file, text):
     file.write( text )
     print( text.splitlines()[0] )
@@ -23,17 +24,15 @@ def record(raw_file):
     f = open(raw_file, 'w')
     f.close()
     f = open(raw_file, 'a')
+    start_time = time()
 
     def on_press(key):
-        write_line( f, 'keyboard|press|{0}\n'.format(key) )
+        write_line(f, 'keyboard|press|{0}|{1}\n'.format( key, round(time() - start_time, 4) ))
         if key == keyboard.Key.ctrl_r:
             return False
 
     def on_release(key):
-        write_line( f, 'keyboard|release|{0}\n'.format(key) )
-        if key == keyboard.Key.esc:
-            # Stop listener
-            return False
+        write_line(f, 'keyboard|release|{0}|{1}\n'.format( key, round(time() - start_time, 4) ))
 
 
     t1 = keyboard.Listener(on_press=on_press, on_release=on_release)
@@ -65,7 +64,6 @@ def record(raw_file):
 
 
 def compile_keyboard(f, data):
-    
     def get_value_format(value):                                                  
         if value[0] == 'u':
             return keys.transform(value[2:-1].replace('\\x','U'))
@@ -83,7 +81,6 @@ def compile_keyboard(f, data):
     elif data['event'] == 'release':
         if formated_value != None:
             write_line(f, 'xdotool keyup {0}\n'.format( formated_value ))
-            #write_line(f, 'sleep 0.1\n')
 
 
 def compile_mouse(f, data):
@@ -91,7 +88,7 @@ def compile_mouse(f, data):
 
 
 # generating of macro code
-def compile(raw_file, output_file):
+def compile(raw_file, output_file, speed):
     with open(raw_file,'r') as f: 
         lines = f.read().splitlines()
 
@@ -99,15 +96,20 @@ def compile(raw_file, output_file):
     f.close()
 
     f = open(output_file, 'a')
+    previous_time = 0.0
 
-    for line in lines:
-        data = line.split('|')
-        data = dict(zip({ "input", "value", "event" }, data))
+    for i in range(len(lines)):
+        data = lines[i].split('|')
+        data = dict(zip({ "input", "value", "event", "time" }, data))
+
+        write_line(f, "sleep {0}\n".format( ( float(data['time']) - previous_time) / speed ))
 
         if data['input'] == 'keyboard':
             compile_keyboard(f, data)
         elif data['input'] == 'mouse':
             compile_mouse(f, data)
+
+        previous_time = float(data['time'])
 
     f.close()
 
