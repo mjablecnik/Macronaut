@@ -92,13 +92,13 @@ def compile_keyboard(f, data):
     formated_value = get_value_format(unicode(data['value']))
     if data['event'] == 'press':
         update_special_keys()
-        if value != None:
-            write_line(f, 'xdootool keydown {0}\n'.format( formated_value ))
+        if formated_value != None:
+            write_line(f, 'xdotool keydown {0}\n'.format( formated_value ))
 
     elif data['event'] == 'release':
         update_special_keys()
-        if value != None:
-            write_line(f, 'xdootool keyup {0}\n'.format( formated_value ))
+        if formated_value != None:
+            write_line(f, 'xdotool keyup {0}\n'.format( formated_value ))
 
 
 def compile_mouse(f, data):
