@@ -26,20 +26,24 @@ def parse_arguments():
     parser.add_argument('--play', action='store_true', default=False, dest='play', help='Play macro script.')
     parser.add_argument('--name', action='store', default="default_macro", dest='name', help='Change name of macro script.')
     parser.add_argument('--speed', action='store', default=1, dest='speed', help='Setup how fast you want it.')
+    parser.add_argument('--verbose', action='store_true', default=config.VERBOSE, dest='verbose', help='Print output into stdout.')
     parser.add_argument('--output-path', action='store', default=config.OUTPUT_PATH, dest='output_path', help='Setup path where save generated macro script.')
+    parser.add_argument('--version', action='version', version='0.5.0')
     return parser.parse_args()
 
 
 
-def main():
+def main():                                                        
     os.system('mkdir -p ' + config.OUTPUT_PATH)
     args = parse_arguments()
-    print config.RAW_FILE
+
+    config.VERBOSE = args.verbose
+    #print config.RAW_FILE
 
     if args.record:
-        macro.record(config.RAW_FILE)		
+        macro.record(verbose)		
     if args.compile:
-        macro.compile(config.RAW_FILE, args.output_path+'/'+args.name, float(args.speed))
+        macro.compile(args.output_path+'/'+args.name, float(args.speed))
     if args.play:
         os.system('bash '+args.output_path+'/'+args.name)
 

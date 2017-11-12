@@ -12,18 +12,18 @@ Macronaut is simple macro creator for simplification repetitive tasks.
   ```
   $ ./macronaut --help
   usage: macronaut [-h] [--record] [--compile] [--play] [--name NAME]
-                   [--speed SPEED] [--output-path OUTPUT_PATH]
+                   [--speed SPEED] [--verbose] [--output-path OUTPUT_PATH] [--version]
   
   optional arguments:
-    -h, --help                      show this help message and exit
-    --record                        Only record keyboard inputs and save into raw_data
-                                    format.
-    --compile                       Compile raw_data format into python runable script
-                                    which is saved into OUTPUT_PATH.
+    -h, --help                      Show this help message and exit
+    --record                        Only record keyboard inputs and save into raw_data format.
+    --compile                       Compile raw_data format into python runable script which is saved into OUTPUT_PATH.
     --play                          Play macro script.
     --name NAME                     Change name of macro script.
     --speed SPEED                   Setup how fast you want it.
+    --verbose                       Print output into stdout.
     --output-path OUTPUT_PATH       Setup path where save generated macro script.
+    --version                       Show program's version number and exit
   ```
 
 ## Special thanks:

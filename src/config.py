@@ -17,10 +17,12 @@ if DEVEL:
     SCRIPT_PATH = os.path.dirname(sys.argv[0])
     OUTPUT_PATH = SCRIPT_PATH + '/tmp/macro'
     RAW_FILE = OUTPUT_PATH + '/macro-raw-data'
+    VERBOSE = True
 
 else:
     # Production
     OUTPUT_PATH = expanduser("~")+'/.config/macronaut'
     RAW_FILE = OUTPUT_PATH + '/macro-raw-data'
+    VERBOSE = False
 
 

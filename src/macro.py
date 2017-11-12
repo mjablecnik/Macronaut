@@ -17,13 +17,14 @@ from pynput import mouse, keyboard
 
 def write_line(file, text):
     file.write( text )
-    print( text.splitlines()[0] )
+    if (config.VERBOSE):
+        print( text.splitlines()[0] )
 
 
-def record(raw_file):
-    f = open(raw_file, 'w')
+def record():
+    f = open(config.RAW_FILE, 'w')
     f.close()
-    f = open(raw_file, 'a')
+    f = open(config.RAW_FILE, 'a')
     start_time = time()
 
     def on_press(key):
@@ -110,8 +111,8 @@ def compile_mouse(f, data):
 
 
 # generating of macro code
-def compile(raw_file, output_file, speed):
-    with open(raw_file,'r') as f: 
+def compile(output_file, speed):
+    with open(config.RAW_FILE,'r') as f: 
         lines = f.read().splitlines()
 
     f = open(output_file, 'w')
