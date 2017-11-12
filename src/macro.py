@@ -62,38 +62,15 @@ def record(raw_file):
 
 
 
-class ShortcutKeys:
-    ctrl = False
-    alt = False
-    shift = False
-    ctrl_l = False
-    alt_l = False
-    shift_l = False
-    ctrl_r = False
-    alt_r = False
-    shift_r = False
-
-    @staticmethod
-    def get_active_keys():
-        shortcut_keys = ""
-        for key, value in ShortcutKeys.__dict__.iteritems():
-            if value == True:
-                shortcut_keys += keys.transform(key) + " + "
-        return shortcut_keys
-
-
 def compile_keyboard(f, data):
     
     def get_value_format(value):                                                  
         if value[0] == 'u':
-            return ShortcutKeys.get_active_keys() + keys.transform(value[2:-1].replace('\\x','U'))
+            return keys.transform(value[2:-1].replace('\\x','U'))
 
         elif value[0:3] == 'Key':
             special_key = value.split('.')[1]
-            if special_key in ShortcutKeys.__dict__.keys():
-                ShortcutKeys.__dict__[special_key] = True if data['event'] == 'press' else False
-            else:
-                return keys.transform(special_key)
+            return keys.transform(special_key)
 
 
     formated_value = get_value_format(unicode(data['value']))
@@ -104,6 +81,7 @@ def compile_keyboard(f, data):
     elif data['event'] == 'release':
         if formated_value != None:
             write_line(f, 'xdotool keyup {0}\n'.format( formated_value ))
+            #write_line(f, 'sleep 0.1\n')
 
 
 def compile_mouse(f, data):
