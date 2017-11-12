@@ -63,20 +63,47 @@ def record(raw_file):
 
 
 
+class SpecialKeys:
+    ctrl = False
+    alt = False
+    shift = False
+    esc = False
+
+    @staticmethod
+    def get_attributes():
+        return dict(SpecialKeys.__dict__.items())
+    @staticmethod
+    def update_attributes(d):
+        SpecialKeys.__dict__.update(d)
 
 def compile_keyboard(f, data):
+    print SpecialKeys.shift
     def get_value_format(value):                                                  
         if value[0] == 'u':
             return value[2:-1].replace('\\x','U')
-        else: 
-            return value
+
+    def update_special_keys():
+        if data['value'][0:3] == 'Key':
+            special_key = data['value'].split('.')[1]
+            keys_attrs = SpecialKeys.get_attributes()
+            keys_attrs[special_key] = True if data['event'] == 'press' else False
+            SpecialKeys.update_attributes(keys_attrs)
+
+    formated_value = get_value_format(unicode(data['value']))
     if data['event'] == 'press':
-        write_line(f, 'xdootool keydown {0}\n'.format( get_value_format(unicode(data['value'])) ))
+        update_special_keys()
+        if value != None:
+            write_line(f, 'xdootool keydown {0}\n'.format( formated_value ))
+
     elif data['event'] == 'release':
-        write_line(f, 'xdootool keyup {0}\n'.format( get_value_format(unicode(data['value'])) ))
+        update_special_keys()
+        if value != None:
+            write_line(f, 'xdootool keyup {0}\n'.format( formated_value ))
+
 
 def compile_mouse(f, data):
     pass
+
 
 # generating of macro code
 def compile(raw_file, output_file):
@@ -86,6 +113,7 @@ def compile(raw_file, output_file):
     f = open(output_file, 'w')
     f.close()
     f = open(output_file, 'a')
+
 
     for line in lines:
         data = line.split('|')
