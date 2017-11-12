@@ -66,13 +66,19 @@ class ShortcutKeys:
     ctrl = False
     alt = False
     shift = False
+    ctrl_l = False
+    alt_l = False
+    shift_l = False
+    ctrl_r = False
+    alt_r = False
+    shift_r = False
 
     @staticmethod
     def get_active_keys():
         shortcut_keys = ""
         for key, value in ShortcutKeys.__dict__.iteritems():
             if value == True:
-                shortcut_keys += key + " + "
+                shortcut_keys += keys.transform(key) + " + "
         return shortcut_keys
 
 
@@ -80,7 +86,7 @@ def compile_keyboard(f, data):
     
     def get_value_format(value):                                                  
         if value[0] == 'u':
-            return ShortcutKeys.get_active_keys() + value[2:-1].replace('\\x','U')
+            return ShortcutKeys.get_active_keys() + keys.transform(value[2:-1].replace('\\x','U'))
 
         elif value[0:3] == 'Key':
             special_key = value.split('.')[1]
@@ -111,8 +117,8 @@ def compile(raw_file, output_file):
 
     f = open(output_file, 'w')
     f.close()
-    f = open(output_file, 'a')
 
+    f = open(output_file, 'a')
 
     for line in lines:
         data = line.split('|')
@@ -124,15 +130,6 @@ def compile(raw_file, output_file):
             compile_mouse(f, data)
 
     f.close()
-
-
-    #file = open(file, 'w')
-    #file.write(text)
-    #file.close()
-
-
-
-
 
 
 
