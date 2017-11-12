@@ -63,38 +63,35 @@ def record(raw_file):
 
 
 
-class SpecialKeys:
+class ShortcutKeys:
     ctrl = False
     alt = False
     shift = False
 
     @staticmethod
-    def get_attributes():
-        return SpecialKeys.__dict__
-    @staticmethod
-    def update_attributes(d):
-        SpecialKeys.__dict__.update(d)
-    @staticmethod
-    def get_active_shortcut_keys():
+    def get_active_keys():
         shortcut_keys = ""
-        for key, value in SpecialKeys.__dict__.iteritems():
+        for key, value in ShortcutKeys.__dict__.iteritems():
             if value == True:
                 shortcut_keys += key + " + "
         return shortcut_keys
 
+def transform(key):
+    if key == 'esc':
+        return 'Escape'
 
 def compile_keyboard(f, data):
+    
     def get_value_format(value):                                                  
         if value[0] == 'u':
-            return SpecialKeys.get_active_shortcut_keys() + value[2:-1].replace('\\x','U')
+            return ShortcutKeys.get_active_keys() + value[2:-1].replace('\\x','U')
+
         elif value[0:3] == 'Key':
             special_key = value.split('.')[1]
-            keys_attrs = SpecialKeys.get_attributes()
-            if special_key in keys_attrs.keys():
-                keys_attrs[special_key] = True if data['event'] == 'press' else False
-                SpecialKeys.update_attributes(keys_attrs)
+            if special_key in ShortcutKeys.__dict__.keys():
+                ShortcutKeys.__dict__[special_key] = True if data['event'] == 'press' else False
             else:
-                return special_key
+                return transform(special_key)
 
 
     formated_value = get_value_format(unicode(data['value']))
