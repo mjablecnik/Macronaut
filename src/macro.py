@@ -28,11 +28,11 @@ def record(raw_file):
 
     def on_press(key):
         write_line(f, 'keyboard|press|{0}|{1}\n'.format( key, round(time() - start_time, 4) ))
-        if key == keyboard.Key.ctrl_r:
-            return False
 
     def on_release(key):
         write_line(f, 'keyboard|release|{0}|{1}\n'.format( key, round(time() - start_time, 4) ))
+        if key == keyboard.Key.ctrl_r:
+            return False
 
 
     t1 = keyboard.Listener(on_press=on_press, on_release=on_release)
