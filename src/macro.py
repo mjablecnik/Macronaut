@@ -4,103 +4,137 @@
 
   Copyright (c) 2016-2017 Martin Jablecnik
   Authors: Martin Jablecnik
-  Description: Macro library
+  Description: Program for generating automatic scripts.
   
 """
 
 import os, sys
 from time import sleep, time
-import keylogger
-import ast
-import config
+import config, keys
+from pynput import mouse, keyboard
 
 
-keystate = {
-     'left ctrl': False,
-     'left alt': False,
-     'left shift': False,
-     'right ctrl': False,
-     'right alt': False,
-     'right shift': False,
-}
+
+def write_line(file, text):
+    file.write( text )
+    if (config.VERBOSE):
+        print( text.splitlines()[0] )
 
 
-def record(raw_file):
-    file = open(raw_file, 'w')
-    def print_keys(t, modifiers, keys): 
-        text_format = ("%.2f|%r|%r\n" % (t, keys, modifiers))
-        file.write(text_format)
-        print(text_format)
+def record():
+    f = open(config.RAW_FILE, 'w')
+    f.close()
+    f = open(config.RAW_FILE, 'a')
+    start_time = time()
+
+    def on_press(key):
+        write_line(f, 'keyboard|press|{0}|{1}\n'.format( key, round(time() - start_time, 4) ))
+
+    def on_release(key):
+        write_line(f, 'keyboard|release|{0}|{1}\n'.format( key, round(time() - start_time, 4) ))
+        if key == keyboard.Key.ctrl_r:
+            return False
 
 
-    while os.path.isfile(config.STOP_FILE):
-        sleep(.005)
-        changed, modifiers, keys = keylogger.fetch_keys()
-        if keys == 'q':
-            os.system("rm %s" % (config.STOP_FILE,))
-
-        if changed: 
-            print_keys(time(), modifiers, keys)
-
-    file.close()
+    t1 = keyboard.Listener(on_press=on_press, on_release=on_release)
+    t1.start()
 
 
-def parse_data(lines):
-    events = []
-    event = 0
-    for line in lines:
-        event += 1
-        keys = line.split('|')
-        key = keys[1]
-        keystate = ast.literal_eval(keys[2])
-        if key != 'None': 
-            key = key[1:-1]
-            events.append([key, keystate])
-    return events
+
+    def on_move(x, y):
+        write_line( f, 'mouse|move|{0}|{1}\n'.format( (x, y), round(time() - start_time, 4) ))
+
+    def on_click(x, y, button, pressed):
+        write_line( f, 'mouse|{0}|{1}|{2}\n'.format( 'press' if pressed else 'release', button, round(time() - start_time, 4) ))
+
+    def on_scroll(x, y, dx, dy):
+        write_line( f, 'mouse|scroll-{0}|{1}|{2}\n'.format( 'down' if dy < 0 else 'up', (x, y), round(time() - start_time, 4) ))
+
+    t2 = mouse.Listener( on_move=on_move, on_click=on_click, on_scroll=on_scroll)
+    t2.start()
+
+    while t1.running:
+        sleep(0.1)
+        if not t1.running:
+            t2.stop()
 
 
-# check if hotkey is pressed
-def is_hotkey(event):
-    hotkeys = event[1]
-    for hotkey, value in hotkeys.items():
-        if value:                                # if hotkey is pressed
-            return True
-    return False
+    f.close()
+    print "closing"
+
+
+
+def compile_keyboard(f, data):
+    def transform_value(value):                                                  
+        if value[0] == 'u':
+            return keys.transform(value[2:-1].replace('\\x','U'))
+
+        elif value[0:3] == 'Key':
+            special_key = value.split('.')[1]
+            return keys.transform(special_key)
+
+
+    transformed_value = transform_value(unicode(data['value']))
+    if data['event'] == 'press':
+        if transformed_value != None:
+            write_line(f, 'xdotool keydown {0}\n'.format( transformed_value ))
+
+    elif data['event'] == 'release':
+        if transformed_value != None:
+            write_line(f, 'xdotool keyup {0}\n'.format( transformed_value ))
+
+
+def compile_mouse(f, data):
+    def transform_value(value):
+        if value == "Button.left":
+            return 1
+        elif value == "Button.middle":
+            return 2
+        elif value == "Button.right":
+            return 3
+
+    transformed_value = transform_value(data['value'])
+    if data['event'] == 'press':    
+        if transformed_value != None:
+            write_line(f, 'xdotool mousedown {0}\n'.format( transformed_value ))
+    elif data['event'] == 'release':
+        if transformed_value != None:
+            write_line(f, 'xdotool mouseup {0}\n'.format( transformed_value ))
+    elif data['event'] == 'move':
+        x, y = eval(data['value'])
+        write_line(f, 'xdotool mousemove {0} {1}\n'.format( x, y ))
+    elif data['event'] == 'scroll-down':
+        write_line(f, 'xdotool click 5\n')
+    elif data['event'] == 'scroll-up':
+        write_line(f, 'xdotool click 4\n')
+        
 
 
 # generating of macro code
-def compile(raw_data, file):
-    events = parse_data(raw_data)
-    text = ''
-    hotkey_str = ''
-    for event in events:
-        if is_hotkey(event):
-            hotkeys = event[1]
-            hotkey_str = "xdotool key "
-            for hotkey, value in hotkeys.items():
-                if value:                                # if hotkey is pressed
-                     hotkey_str += hotkey.split(' ')[1]  #add name of key
-                     hotkey_str += "+"
-            hotkey_str += "%s\n" % event[0]
-            text += hotkey_str
-        else:
-            key = event[0]
-            if key == '<enter>':
-                text += "xdotool key Return\n"
-            elif key == '<tab>':
-                text += "xdotool key Tab\n"
-            elif key == '<caps lock>':
-                text += "xdotool key Escape\n"
-            else:
-                text += "xdotool key %s\n" % key 
+def compile(output_file, speed):
+    with open(config.RAW_FILE,'r') as f: 
+        lines = f.read().splitlines()
 
-    file = open(file, 'w')
-    file.write(text)
-    file.close()
+    f = open(output_file, 'w')
+    f.close()
 
+    f = open(output_file, 'a')
+    previous_time = 0.0
 
+    for i in range(len(lines)):
+        data = lines[i].split('|')
+        data = dict(zip({ "input", "value", "event", "time" }, data))
 
+        write_line(f, "sleep {0}\n".format( ( float(data['time']) - previous_time) / speed ))
 
+        if data['input'] == 'keyboard':
+            compile_keyboard(f, data)
+        elif data['input'] == 'mouse':
+            compile_mouse(f, data)
+
+        previous_time = float(data['time'])
+
+    f.close()
 
 
 

@@ -2,40 +2,34 @@
 Macronaut is simple macro creator for simplification repetitive tasks.
 
 
-## Run:
+### Installation:
 
-  Fork project from github and clone it:
-  
   ```
-  git clone <git-repository>
-  ```
-
-  
-  Go to repository:
-  ```
-  cd Macronaut
+  sudo ./install.sh
   ```
   
-
-  Run command:
+### Run:
   ```
-  pip install PyUserInput
-  bash install.sh
-  ```
+  $ ./macronaut --help
+  usage: macronaut [-h] [--record] [--compile] [--play] [--name NAME]
+                   [--speed SPEED] [--verbose] [--output-path OUTPUT_PATH] [--version]
   
-  And now you can run macronaut in your shell by command:
-  ```
-  macronaut record <name>    -- start creating macro with specific name
-  macronaut remove <name>    -- remove existing macro
-  macronaut play <name>      -- play created macro
-  macronaut list             -- list all macros
+  optional arguments:
+    -h, --help                      Show this help message and exit
+    --record                        Only record keyboard inputs and save into raw_data format.
+    --compile                       Compile raw_data format into python runable script which is saved into OUTPUT_PATH.
+    --play                          Play macro script.
+    --name NAME                     Change name of macro script.
+    --speed SPEED                   Setup how fast you want it.
+    --verbose                       Print output into stdout.
+    --output-path OUTPUT_PATH       Setup path where save generated macro script.
+    --version                       Show program's version number and exit
   ```
 
 ## Special thanks:
 
- - [pykeylogger](https://github.com/amoffat/pykeylogger): Python keylogger from Andrew Moffat.
  - [xdotool](http://www.semicomplete.com/projects/xdotool/): Tool lets you simulate keyboard input and mouse activity.
- - [PyUserInput](https://github.com/PyUserInput/PyUserInput): Cross-platform control of the mouse and keyboard in python.
+ - [Pynput](https://github.com/moses-palmer/pynput): Library for control and monitor input devices.
 
 
 

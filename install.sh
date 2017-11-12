@@ -1,11 +1,12 @@
 #!/bin/bash
+set -e
 
-
+pip install pynput==1.3.7 
 apt-get install xdotool
 
-cp -r lib/* /usr/lib/python2.7/
-cp -r src/{macro.py,config.py} /usr/lib/python2.7/
-cp src/main.py /usr/bin/macro-creator
+sed -i -e 's/DEVEL=True/DEVEL=False/g' src/config.py
+
+cp -r src/*.py /usr/lib/python2.7/
 cp src/macronaut /usr/bin/macronaut
 
 
