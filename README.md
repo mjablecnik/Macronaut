@@ -2,32 +2,28 @@
 Macronaut is simple macro creator for simplification repetitive tasks.
 
 
-## Run:
+### Installation:
 
-  Fork project from github and clone it:
-  
   ```
-  git clone <git-repository>
-  ```
-
-  
-  Go to repository:
-  ```
-  cd Macronaut
-  ```
-  
-
-  Run command:
-  ```
-  pip install pynput==1.3.7 
   bash install.sh
   ```
   
-  And now you can run macronaut in your shell by command:
+### Run:
   ```
-  macronaut --record           -- record macro ( end recording by <Esc> )
-  macronaut --compile <name>   -- compile macro
-  macronaut --play <name>      -- play macro
+  $ ./macronaut --help
+  usage: macronaut [-h] [--record] [--compile] [--play] [--name NAME]
+                   [--speed SPEED] [--output-path OUTPUT_PATH]
+  
+  optional arguments:
+    -h, --help                      show this help message and exit
+    --record                        Only record keyboard inputs and save into raw_data
+                                    format.
+    --compile                       Compile raw_data format into python runable script
+                                    which is saved into OUTPUT_PATH.
+    --play                          Play macro script.
+    --name NAME                     Change name of macro script.
+    --speed SPEED                   Setup how fast you want it.
+    --output-path OUTPUT_PATH       Setup path where save generated macro script.
   ```
 
 ## Special thanks:
