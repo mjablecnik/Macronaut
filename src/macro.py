@@ -65,9 +65,15 @@ def record(raw_file):
 
 
 def compile_keyboard(f, data):
+    def get_value_format(value):                                                  
+        if value[0] == 'u':
+            return value[2:-1].replace('\\x','U')
+        else: 
+            return value
     if data['event'] == 'press':
-        value = data['value']
-        write_line(f, 'xdootool keydown {0}\n'.format( value if value[0] != 'u' else value[2:-1] ))
+        write_line(f, 'xdootool keydown {0}\n'.format( get_value_format(unicode(data['value'])) ))
+    elif data['event'] == 'release':
+        write_line(f, 'xdootool keyup {0}\n'.format( get_value_format(unicode(data['value'])) ))
 
 def compile_mouse(f, data):
     pass
