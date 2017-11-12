@@ -25,3 +25,5 @@ else:
     OUTPUT_PATH = expanduser("~")+'/.config/macronaut'
     RAW_FILE = OUTPUT_PATH + '/macro-raw-data'
     STOP_FILE = OUTPUT_PATH + '/stop-rec'   # if doesn't exist so recording is stopped
+
+

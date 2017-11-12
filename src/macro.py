@@ -10,8 +10,7 @@
 
 import os, sys
 from time import sleep, time
-import ast
-import config
+import config, keys
 from pynput import mouse, keyboard
 
 
@@ -76,9 +75,6 @@ class ShortcutKeys:
                 shortcut_keys += key + " + "
         return shortcut_keys
 
-def transform(key):
-    if key == 'esc':
-        return 'Escape'
 
 def compile_keyboard(f, data):
     
@@ -91,7 +87,7 @@ def compile_keyboard(f, data):
             if special_key in ShortcutKeys.__dict__.keys():
                 ShortcutKeys.__dict__[special_key] = True if data['event'] == 'press' else False
             else:
-                return transform(special_key)
+                return keys.transform(special_key)
 
 
     formated_value = get_value_format(unicode(data['value']))
@@ -129,28 +125,6 @@ def compile(raw_file, output_file):
 
     f.close()
 
-    #text = ''
-    #hotkey_str = ''
-    #for event in events:
-    #    if is_hotkey(event):
-    #        hotkeys = event[1]
-    #        hotkey_str = "xdotool key "
-    #        for hotkey, value in hotkeys.items():
-    #            if value:                                # if hotkey is pressed
-    #                 hotkey_str += hotkey.split(' ')[1]  #add name of key
-    #                 hotkey_str += "+"
-    #        hotkey_str += "%s\n" % event[0]
-    #        text += hotkey_str
-    #    else:
-    #        key = event[0]
-    #        if key == '<enter>':
-    #            text += "xdotool key Return\n"
-    #        elif key == '<tab>':
-    #            text += "xdotool key Tab\n"
-    #        elif key == '<caps lock>':
-    #            text += "xdotool key Escape\n"
-    #        else:
-    #            text += "xdotool key %s\n" % key 
 
     #file = open(file, 'w')
     #file.write(text)
