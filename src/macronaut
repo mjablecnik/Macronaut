@@ -28,7 +28,7 @@ def parse_arguments():
     parser.add_argument('--speed', action='store', default=1, dest='speed', help='Setup how fast you want it.')
     parser.add_argument('--verbose', action='store_true', default=config.VERBOSE, dest='verbose', help='Print output into stdout.')
     parser.add_argument('--output-path', action='store', default=config.OUTPUT_PATH, dest='output_path', help='Setup path where save generated macro script.')
-    parser.add_argument('--version', action='version', version='0.5.0')
+    parser.add_argument('--version', action='version', version='1.0.0')
     return parser.parse_args()
 
 
