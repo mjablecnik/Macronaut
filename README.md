@@ -5,7 +5,7 @@ Macronaut is simple macro creator for simplification repetitive tasks.
 ### Installation:
 
   ```
-  bash install.sh
+  sudo ./install.sh
   ```
   
 ### Run:
