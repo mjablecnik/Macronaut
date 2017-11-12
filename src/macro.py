@@ -67,36 +67,42 @@ class SpecialKeys:
     ctrl = False
     alt = False
     shift = False
-    esc = False
 
     @staticmethod
     def get_attributes():
-        return dict(SpecialKeys.__dict__.items())
+        return SpecialKeys.__dict__
     @staticmethod
     def update_attributes(d):
         SpecialKeys.__dict__.update(d)
+    @staticmethod
+    def get_active_shortcut_keys():
+        shortcut_keys = ""
+        for key, value in SpecialKeys.__dict__.iteritems():
+            if value == True:
+                shortcut_keys += key + " + "
+        return shortcut_keys
+
 
 def compile_keyboard(f, data):
-    print SpecialKeys.shift
     def get_value_format(value):                                                  
         if value[0] == 'u':
-            return value[2:-1].replace('\\x','U')
-
-    def update_special_keys():
-        if data['value'][0:3] == 'Key':
-            special_key = data['value'].split('.')[1]
+            return SpecialKeys.get_active_shortcut_keys() + value[2:-1].replace('\\x','U')
+        elif value[0:3] == 'Key':
+            special_key = value.split('.')[1]
             keys_attrs = SpecialKeys.get_attributes()
-            keys_attrs[special_key] = True if data['event'] == 'press' else False
-            SpecialKeys.update_attributes(keys_attrs)
+            if special_key in keys_attrs.keys():
+                keys_attrs[special_key] = True if data['event'] == 'press' else False
+                SpecialKeys.update_attributes(keys_attrs)
+            else:
+                return special_key
+
 
     formated_value = get_value_format(unicode(data['value']))
     if data['event'] == 'press':
-        update_special_keys()
         if formated_value != None:
             write_line(f, 'xdotool keydown {0}\n'.format( formated_value ))
 
     elif data['event'] == 'release':
-        update_special_keys()
         if formated_value != None:
             write_line(f, 'xdotool keyup {0}\n'.format( formated_value ))
 
