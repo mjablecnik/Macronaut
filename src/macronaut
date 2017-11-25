@@ -29,6 +29,8 @@ def parse_arguments():
     parser.add_argument('--verbose', action='store_true', default=config.VERBOSE, dest='verbose', help='Print output into stdout.')
     parser.add_argument('--output-path', action='store', default=config.OUTPUT_PATH, dest='output_path', help='Setup path where save generated macro script.')
     parser.add_argument('--version', action='version', version='0.5.0')
+    parser.add_argument('--list', action='store_true', default=False, dest='list', help='List names all possible macros.')
+    parser.add_argument('--delete', action='store', default=None, dest='delete', help='Delete macro.')
     return parser.parse_args()
 
 
@@ -46,6 +48,20 @@ def main():
         macro.compile(args.output_path+'/'+args.name, float(args.speed))
     if args.play:
         os.system('bash '+args.output_path+'/'+args.name)
+    if args.list:
+        macros = os.listdir(args.output_path)
+        macros.sort()
+        for macro in macros:
+            print macro
+    if args.delete != None:
+        macros = os.listdir(args.output_path)
+        if args.delete in macros:
+            os.remove(args.output_path + "/" + args.delete)
+            print "Macro \"%s\" removed." % (args.delete,)
+        else:
+            print "Macro with name \"%s\" doesn't exists." % (args.delete,)
+
+
 
 
 
