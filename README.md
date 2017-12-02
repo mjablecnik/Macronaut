@@ -13,7 +13,7 @@ Macronaut is simple macro creator for simplification repetitive tasks.
   Usage:
     macronaut record <name>
     macronaut compile <name> [--speed=<num>]
-    macronaut play <name> [--speed=<num>]
+    macronaut play <name> [--speed=<num>] [--repeat=<num>]
     macronaut delete <name>
     macronaut (ls | list)
     macronaut (-h | --help)
@@ -22,8 +22,8 @@ Macronaut is simple macro creator for simplification repetitive tasks.
   Options:
     -h --help       Show this screen.
     -v --version    Show version.
-    --speed=<num>   Speed in float number [default: 1].
-  
+    -s --speed=<num>   Speed in float number [default: 1].
+    -r --repeat=<num>   Number of repeating  [default: 1].
   ```
 
 
