@@ -37,7 +37,7 @@ def main():
     os.system('mkdir -p ' + config.RAW_PATH)
 
     global macro
-    args = docopt(__doc__, version='1.1.0')
+    args = docopt(__doc__, version='1.2.0')
 
     if args['<name>']:
         name = args['<name>']
