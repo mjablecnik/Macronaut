@@ -10,17 +10,18 @@
   Usage:
     macronaut record <name>
     macronaut compile <name> [--speed=<num>]
-    macronaut play <name> [--speed=<num>] [--repeat=<num>]
+    macronaut play <name> [--speed=<num>] [--repeat=<num>] [--delay=<sec>]     
     macronaut delete <name>
     macronaut (ls | list)
     macronaut (-h | --help)
     macronaut (-v | --version)
   
   Options:
-    -h --help       Show this screen.
-    -v --version    Show version.
+    -h --help           Show this screen.
+    -v --version        Show version.
     -s --speed=<num>    Speed in float number [default: 1].
-    -r --repeat=<num>   Number of repeating  [default: 1].
+    -r --repeat=<num>   Number of repeating [default: 1].
+    -d --delay=<sec>    Delay time in seconds before run macro [default: 0].
   
 """
 
@@ -28,6 +29,7 @@ from docopt import docopt
 
 import sys, os
 import macro, config
+from time import sleep
 
 
 def main():                                                        
@@ -49,8 +51,10 @@ def main():
     if args['play']:
         macro.compile( config.RAW_PATH, config.OUTPUT_PATH, name, float(args['--speed']) )
         macro_path = os.path.join(config.OUTPUT_PATH, name+".macro")
+
+        sleep(float(args['--delay']))
         for i in range(int(args['--repeat'])):
-            print "repeat: "+str(i)
+            print "Run macro with repeat: "+str(i)
             os.system('bash ' + macro_path)
 
     if args['list'] or args['ls']:

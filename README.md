@@ -20,10 +20,11 @@ Macronaut is simple macro creator for simplification repetitive tasks.
     macronaut (-v | --version)
   
   Options:
-    -h --help       Show this screen.
-    -v --version    Show version.
-    -s --speed=<num>   Speed in float number [default: 1].
-    -r --repeat=<num>   Number of repeating  [default: 1].
+    -h --help           Show this screen.
+    -v --version        Show version.
+    -s --speed=<num>    Speed in float number [default: 1].
+    -r --repeat=<num>   Number of repeating [default: 1].
+    -d --delay=<sec>    Delay time in seconds before run macro [default: 0].
   ```
 
 
