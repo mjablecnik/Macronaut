@@ -10,7 +10,7 @@
   Usage:
     macronaut record <name>
     macronaut compile <name> [--speed=<num>]
-    macronaut play <name> [--speed=<num>]
+    macronaut play <name> [--speed=<num>] [--repeat=<num>]
     macronaut delete <name>
     macronaut (ls | list)
     macronaut (-h | --help)
@@ -19,7 +19,8 @@
   Options:
     -h --help       Show this screen.
     -v --version    Show version.
-    --speed=<num>    Speed in knots [default: 1].
+    -s --speed=<num>    Speed in float number [default: 1].
+    -r --repeat=<num>   Number of repeating  [default: 1].
   
 """
 
@@ -48,7 +49,10 @@ def main():
     if args['play']:
         macro.compile( config.RAW_PATH, config.OUTPUT_PATH, name, float(args['--speed']) )
         macro_path = os.path.join(config.OUTPUT_PATH, name+".macro")
-        os.system('bash ' + macro_path)
+        for i in range(int(args['--repeat'])):
+            print "repeat: "+str(i)
+            os.system('bash ' + macro_path)
+
     if args['list'] or args['ls']:
         files = os.listdir(config.OUTPUT_PATH)
         files.sort()
