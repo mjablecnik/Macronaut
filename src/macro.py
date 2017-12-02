@@ -21,10 +21,10 @@ def write_line(file, text):
         print( text.splitlines()[0] )
 
 
-def record():
-    f = open(config.RAW_FILE, 'w')
-    f.close()
-    f = open(config.RAW_FILE, 'a')
+def record(path, name):
+    full_file_path = os.path.join(path, name+".raw")
+    open(full_file_path, 'w').close() # clear file
+    f = open(full_file_path, 'a')
     start_time = time()
 
     def on_press(key):
@@ -60,7 +60,7 @@ def record():
 
 
     f.close()
-    print "closing"
+    print "Recorded data was saved into: " + path
 
 
 
@@ -110,15 +110,20 @@ def compile_mouse(f, data):
         
 
 
-# generating of macro code
-def compile(output_file, speed):
-    with open(config.RAW_FILE,'r') as f: 
+## Generate macro code
+def compile(raw_path, output_path, name, speed):
+    full_raw_path = os.path.join(raw_path, name+".raw")
+    full_output_path = os.path.join(output_path, name+".macro")
+
+    # read raw file
+    with open(full_raw_path,'r') as f: 
         lines = f.read().splitlines()
 
-    f = open(output_file, 'w')
-    f.close()
+    # clean old macro
+    open(full_output_path, 'w').close()
 
-    f = open(output_file, 'a')
+    # write new macro
+    f = open(full_output_path, 'a')
     previous_time = 0.0
 
     for i in range(len(lines)):
