@@ -9,7 +9,6 @@
 
   Usage:
     macronaut record <name>
-    macronaut compile <name> [--speed=<num>]
     macronaut play <name> [--speed=<num>] [--repeat=<num>] [--delay=<sec>]     
     macronaut delete <name>
     macronaut (ls | list)
@@ -47,8 +46,8 @@ def main():
 
     if args['record']:
         macro.record( config.RAW_PATH, name )
-    if args['compile']:
-        macro.compile( config.RAW_PATH, config.OUTPUT_PATH, name, float(args['--speed']) )
+    #if args['compile']:
+    #    macro.compile( config.RAW_PATH, config.OUTPUT_PATH, name, float(args['--speed']) )
     if args['play']:
         macro.compile( config.RAW_PATH, config.OUTPUT_PATH, name, float(args['--speed']) )
         macro_path = os.path.join(config.OUTPUT_PATH, name+".macro")
