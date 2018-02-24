@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 
-  Copyright (c) 2016-2017 Martin Jablecnik
+  Copyright (c) 2016-2018 Martin Jablecnik
   Authors: Martin Jablecnik
   Description: Script for record macros
   
@@ -28,7 +28,7 @@
 from docopt import docopt
 
 import sys, os
-import macro, config
+from macronaut import macro, config
 from time import sleep
 
 

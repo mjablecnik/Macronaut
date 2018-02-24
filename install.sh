@@ -6,7 +6,8 @@ apt-get install xdotool
 
 sed -i -e 's/DEVEL=True/DEVEL=False/g' src/config.py
 
-cp -r src/*.py /usr/lib/python2.7/
+mkdir -p /usr/lib/python2.7/macronaut/
+cp -r src/*.py /usr/lib/python2.7/macronaut/
 cp src/macronaut /usr/bin/macronaut
 
 
