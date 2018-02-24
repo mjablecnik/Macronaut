@@ -16,6 +16,7 @@ if DEVEL:
     # Development
     SCRIPT_PATH = os.path.dirname(sys.argv[0])
     OUTPUT_PATH = SCRIPT_PATH + '/tmp/macros/'
+    RAW_PATH = SCRIPT_PATH + '/tmp/raw-data/'
     VERBOSE = True
 
 else:

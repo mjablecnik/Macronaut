@@ -45,6 +45,8 @@ def main():
         name = "default_name"
 
     if args['record']:
+        print "Start recording..."
+        print "For stop record run shortcut: R_Ctrl+Q"
         macro.record( config.RAW_PATH, name )
     #if args['compile']:
     #    macro.compile( config.RAW_PATH, config.OUTPUT_PATH, name, float(args['--speed']) )
@@ -58,24 +60,25 @@ def main():
             os.system('bash ' + macro_path)
 
     if args['list'] or args['ls']:
-        files = os.listdir(config.OUTPUT_PATH)
+        files = os.listdir(config.RAW_PATH)
         files.sort()
         macros = []
         for file in files:
-            if '.raw' in file:
+            if '.macro' in file:
                 continue
             else:
                 print file.split('.')[0]
     if args['delete']:
         macros = os.listdir(config.OUTPUT_PATH)
-        if name+".macro" or name+".raw" in macros:
+        macros += os.listdir(config.RAW_PATH)
+        if name+".macro" in macros:
             macro_file = os.path.join(config.OUTPUT_PATH, name+".macro")
-            raw_file = os.path.join(config.OUTPUT_PATH, name+".raw")
             os.remove(macro_file)
+            print "Macro \"%s\" was removed." % name
+        if name+".raw" in macros:
+            raw_file = os.path.join(config.RAW_PATH, name+".raw")
             os.remove(raw_file)
-            print "Macro \"%s\" removed." % name
-        else:
-            print "Macro with name \"%s\" doesn't exists." % name
+            print "Raw file \"%s\" was removed." % name
 
 
 if __name__ == "__main__":
