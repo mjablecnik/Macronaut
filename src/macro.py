@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 
-  Copyright (c) 2016-2017 Martin Jablecnik
+  Copyright (c) 2016-2018 Martin Jablecnik
   Authors: Martin Jablecnik
   Description: Program for generating automatic scripts.
   
@@ -27,6 +27,8 @@ def record(path, name):
     f = open(full_file_path, 'a')
     start_time = time()
 
+
+    #####    Keyboard thread   #####
     def on_press(key):
         write_line(f, 'keyboard|press|{0}|{1}\n'.format( key, round(time() - start_time, 4) ))
 
@@ -36,11 +38,12 @@ def record(path, name):
             return False
 
 
-    t1 = keyboard.Listener(on_press=on_press, on_release=on_release)
-    t1.start()
+    keyboard_thread = keyboard.Listener(on_press=on_press, on_release=on_release)
+    keyboard_thread.start()
 
 
 
+    #####    Mouse thread   #####
     def on_move(x, y):
         write_line( f, 'mouse|move|{0}|{1}\n'.format( (x, y), round(time() - start_time, 4) ))
 
@@ -50,13 +53,16 @@ def record(path, name):
     def on_scroll(x, y, dx, dy):
         write_line( f, 'mouse|scroll-{0}|{1}|{2}\n'.format( 'down' if dy < 0 else 'up', (x, y), round(time() - start_time, 4) ))
 
-    t2 = mouse.Listener( on_move=on_move, on_click=on_click, on_scroll=on_scroll)
-    t2.start()
+    mouse_thread = mouse.Listener( on_move=on_move, on_click=on_click, on_scroll=on_scroll)
+    mouse_thread.start()
 
-    while t1.running:
+
+
+    #####    Main thread loop   #####
+    while keyboard_thread.running:
         sleep(0.1)
-        if not t1.running:
-            t2.stop()
+        if not keyboard_thread.running:
+            mouse_thread.stop()
 
 
     f.close()
@@ -64,6 +70,9 @@ def record(path, name):
 
 
 
+
+
+##  Compile macro code  
 def compile_keyboard(f, data):
     def transform_value(value):                                                  
         if value[0] == 'u':
