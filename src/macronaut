@@ -28,6 +28,7 @@
 from docopt import docopt
 
 import sys, os
+import macronaut
 from macronaut import macro, config
 from time import sleep
 
@@ -37,7 +38,7 @@ def main():
     os.system('mkdir -p ' + config.RAW_PATH)
 
     global macro
-    args = docopt(__doc__, version='1.2.0')
+    args = docopt(__doc__, version=macronaut.__version__)
 
     if args['<name>']:
         name = args['<name>']
