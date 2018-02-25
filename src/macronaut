@@ -10,7 +10,8 @@
   Usage:
     macronaut record <name>
     macronaut play <name> [--speed=<num>] [--repeat=<num>] [--delay=<sec>]     
-    macronaut delete <name>
+    macronaut rm <name>
+    macronaut rename <old-name> <new-name>
     macronaut (ls | list)
     macronaut (-h | --help)
     macronaut (-v | --version)
@@ -68,7 +69,7 @@ def main():
                 continue
             else:
                 print file.split('.')[0]
-    if args['delete']:
+    if args['rm']:
         macros = os.listdir(config.OUTPUT_PATH)
         macros += os.listdir(config.RAW_PATH)
         if name+".macro" in macros:
@@ -79,6 +80,23 @@ def main():
             raw_file = os.path.join(config.RAW_PATH, name+".raw")
             os.remove(raw_file)
             print "Raw file \"%s\" was removed." % name
+    if args['rename']:
+        old_name = args['<old-name>']
+        new_name = args['<new-name>']
+        macros = os.listdir(config.OUTPUT_PATH) + os.listdir(config.RAW_PATH)
+        suffix = ".macro"
+        if old_name+suffix in macros:
+            old_macro_file = os.path.join(config.OUTPUT_PATH, old_name+suffix)
+            new_macro_file = os.path.join(config.OUTPUT_PATH, new_name+suffix)
+            os.rename(old_macro_file, new_macro_file)
+            #print "Macro \"%s\" was renamed to \"%s\"." % (old_name, new_name)
+        suffix = ".raw"
+        if old_name+suffix in macros:
+            old_macro_file = os.path.join(config.RAW_PATH, old_name+suffix)
+            new_macro_file = os.path.join(config.RAW_PATH, new_name+suffix)
+            os.rename(old_macro_file, new_macro_file)
+            #print "Raw file \"%s\" was renamed to \"%s\"." % (old_name, new_name)
+            print "\"%s\" renamed to \"%s\"" % (old_name, new_name)
 
 
 if __name__ == "__main__":
