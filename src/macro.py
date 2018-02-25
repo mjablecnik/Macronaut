@@ -72,6 +72,51 @@ def record(path, name):
 
 
 
+## Experimental mode for fast mouse recording
+def fast_mouse_record(path, name):
+    full_file_path = os.path.join(path, name+".raw")
+    open(full_file_path, 'w').close() # clear file
+    f = open(full_file_path, 'a')
+    start_time = time()
+
+
+
+    #####    Keyboard thread   #####
+    def on_press(key):
+        write_line(f, 'keyboard|press|{0}|{1}\n'.format( key, round(time() - start_time, 4) ))
+
+    def on_release(key):
+        write_line(f, 'keyboard|release|{0}|{1}\n'.format( key, round(time() - start_time, 4) ))
+        if key == keyboard.Key.ctrl_r:
+            return False
+
+
+    keyboard_thread = keyboard.Listener(on_press=on_press, on_release=on_release)
+    keyboard_thread.start()
+
+
+
+    #####    Mouse thread   #####
+    def on_click(x, y, button, pressed):
+        if pressed:
+            write_line(f, "mouse|move|({0}, {1})|{2}\n".format(x, y, round(time() - start_time, 4)))
+        write_line(f, 'mouse|{0}|{1}|{2}\n'.format( 'press' if pressed else 'release', button, round(time() - start_time, 4) ))
+
+    mouse_thread = mouse.Listener( on_click=on_click)
+    mouse_thread.start()
+
+
+    #####    Main thread loop   #####
+    while keyboard_thread.running:
+        sleep(0.1)
+        if not keyboard_thread.running:
+            mouse_thread.stop()
+
+    f.close()
+    print "Recorded data was saved into: " + path
+
+
+
 ##  Compile macro code  
 def compile_keyboard(f, data):
     def transform_value(value):                                                  

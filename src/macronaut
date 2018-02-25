@@ -8,9 +8,9 @@
   
 
   Usage:
-    macronaut record <name>
+    macronaut record [--fast-mouse] <name>
     macronaut play <name> [--speed=<num>] [--repeat=<num>] [--delay=<sec>]     
-    macronaut rm <name>
+    macronaut (rm | remove) <name>
     macronaut rename <old-name> <new-name>
     macronaut (ls | list)
     macronaut (-h | --help)
@@ -22,6 +22,7 @@
     -s --speed=<num>    Speed in float number [default: 1].
     -r --repeat=<num>   Number of repeating [default: 1].
     -d --delay=<sec>    Delay time in seconds before run macro [default: 0].
+    -f --fast-mouse     Run recording for fast mouse
   
 """
 
@@ -46,9 +47,14 @@ def main():
         name = "default_name"
 
     if args['record']:
-        print "Start recording..."
-        print "For stop record run shortcut: R_Ctrl+Q"
-        macro.record( config.RAW_PATH, name )
+        if args['--fast-mouse']:
+            print "Start recording..."
+            print "Recording stop by shortcut: shortcut: R_Ctrl"
+            macro.fast_mouse_record( config.RAW_PATH, name )
+        else:
+            print "Start recording..."
+            print "Recording stop by shortcut: R_Ctrl"
+            macro.record( config.RAW_PATH, name )
     #if args['compile']:
     #    macro.compile( config.RAW_PATH, config.OUTPUT_PATH, name, float(args['--speed']) )
     if args['play']:
