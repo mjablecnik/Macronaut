@@ -45,6 +45,7 @@ def main():
         name = "default_name"
 
     if args['record']:
+        os.system('macronaut delete ' + name)
         os.system('echo \'message:Macro is recording\' | zenity --notification --listen &')
         print "Start recording..."
         print "For stop recording press R_Ctrl"
